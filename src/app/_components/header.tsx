@@ -10,6 +10,10 @@ export function Header() {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
 
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <header className="site-header">
       <div className="container nav-wrap">
@@ -63,6 +67,12 @@ export function Header() {
             aria-current={pathname === "/admin" ? "page" : undefined}
           >
             Admin
+          </Link>
+          <Link
+            href="/legacy-admin"
+            aria-current={pathname === "/legacy-admin" ? "page" : undefined}
+          >
+            Legacy Admin
           </Link>
           {session ? (
             <button

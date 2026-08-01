@@ -1,69 +1,99 @@
 import Link from "next/link";
 
-import { SignInButton, SignOutButton } from "@/app/_components/auth-buttons";
-import { LatestPost } from "@/app/_components/post";
-import { getSession } from "@/server/better-auth/server";
-import { api, HydrateClient } from "@/trpc/server";
+import { HydrateClient } from "@/trpc/server";
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
-  const posts = await api.post.getPosts();
-
-  console.log("Posts ", posts);
-
-  const session = await getSession();
-
-  if (session) {
-    void api.post.getLatest.prefetch();
-  }
-
   return (
     <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
+      <section className="hero section">
+        <div className="container hero-grid">
+          <div>
+            <p className="eyebrow">Inclusive learning support</p>
+            <h1>Personalized Learning Support Designed for Every Child</h1>
+            <p className="lead">
+              Personalized learning plans, educational activities, and parent
+              support tools created to help children build confidence, strengthen
+              skills, and reach their potential.
             </p>
-
-            <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
-                {session && <span>Logged in as {session.user?.name}</span>}
-              </p>
-              {!session ? <SignInButton /> : <SignOutButton />}
+            <div className="cta-row">
+              <Link className="btn btn-primary" href="/packages">
+                Explore Learning Packages
+              </Link>
+              <Link className="btn btn-secondary" href="/contact">
+                Get Started
+              </Link>
+              <Link className="btn btn-tertiary" href="/parent-assessment">
+                Find the Right Support
+              </Link>
             </div>
           </div>
-
-          {session?.user && <LatestPost />}
+          <aside className="hero-panel card">
+            <p className="eyebrow">Who we help</p>
+            <h2>Support that meets children where they are</h2>
+            <ul className="check-list">
+              <li>
+                <strong>Parents:</strong> personalized support strategies, home
+                learning activities, and development guidance.
+              </li>
+              <li>
+                <strong>Students:</strong> learning support, practice activities,
+                homework assistance, and confidence-building tools.
+              </li>
+              <li>
+                <strong>Students With Learning Differences:</strong> customized
+                activities, learning strategies, visual supports, and resources.
+              </li>
+            </ul>
+          </aside>
         </div>
-      </main>
+      </section>
+
+      <section className="section">
+        <div className="container split-card card accent-card">
+          <div>
+            <p className="eyebrow">Not sure where to begin?</p>
+            <h2>
+              Answer a few thoughtful questions to discover supportive learning
+              resources that may fit your child’s needs.
+            </h2>
+          </div>
+          <Link className="btn btn-primary" href="/parent-assessment">
+            Start the Assessment
+          </Link>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <div className="section-heading">
+            <p className="eyebrow">How we work</p>
+            <h2>Practical, supportive guidance for families and educators</h2>
+          </div>
+          <div className="cards-grid three-up">
+            <article className="card feature-card">
+              <h3>Learning plans</h3>
+              <p>
+                Structured, child-centered plans that support progress without
+                overwhelming families.
+              </p>
+            </article>
+            <article className="card feature-card">
+              <h3>Home activities</h3>
+              <p>
+                Simple, flexible practice ideas that fit into everyday routines and
+                reinforce skills at home.
+              </p>
+            </article>
+            <article className="card feature-card">
+              <h3>Parent support</h3>
+              <p>
+                Clear next steps, coaching tools, and helpful strategies designed
+                for real life.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
     </HydrateClient>
   );
 }

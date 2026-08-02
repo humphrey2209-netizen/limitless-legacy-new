@@ -16,7 +16,7 @@ export function Header() {
 
   return (
     <header className="site-header">
-      <div className="container nav-wrap">
+      <div className="nav-wrap container">
         <Link href="/" className="brand-wrap">
           <Image
             src="/limitless-logo.png"
@@ -58,7 +58,9 @@ export function Header() {
           </Link>
           <Link
             href="/parent-assessment"
-            aria-current={pathname === "/parent-assessment" ? "page" : undefined}
+            aria-current={
+              pathname === "/parent-assessment" ? "page" : undefined
+            }
           >
             Assessment
           </Link>
@@ -68,12 +70,12 @@ export function Header() {
           >
             Admin
           </Link>
-          <Link
+          {/*<Link
             href="/legacy-admin"
             aria-current={pathname === "/legacy-admin" ? "page" : undefined}
           >
             Legacy Admin
-          </Link>
+          </Link>*/}
           {session ? (
             <button
               type="button"

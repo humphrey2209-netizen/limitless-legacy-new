@@ -38,6 +38,7 @@ export const packagesRouter = createTRPCRouter({
       await ctx.db.insert(packages).values({
         id,
         ...input,
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         purchaseUrl: input.purchaseUrl || null,
         description: input.description ?? null,
       });
@@ -56,6 +57,7 @@ export const packagesRouter = createTRPCRouter({
         .update(packages)
         .set({
           ...input.data,
+          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           purchaseUrl: input.data.purchaseUrl || null,
           description: input.data.description ?? null,
           updatedAt: new Date(),

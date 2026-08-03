@@ -1,9 +1,11 @@
 import { type Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ExternalLink, Globe } from "lucide-react";
 
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { getSession } from "@/server/better-auth/server";
 import { AdminSidebar } from "./_components/admin-sidebar";
 
 export const metadata: Metadata = {
@@ -11,11 +13,17 @@ export const metadata: Metadata = {
   description: "Limitless Legacy site management and content administration portal.",
 };
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getSession();
+
+  if (!session?.user) {
+    redirect("/login?redirectTo=/admin");
+  }
+
   return (
     <TooltipProvider>
       <SidebarProvider defaultOpen={true}>

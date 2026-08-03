@@ -2,7 +2,6 @@
 
 import { useForm } from "@tanstack/react-form";
 import { Loader2, Plus, Trash2 } from "lucide-react";
-import { useEffect } from "react";
 import type { AnyFieldApi } from "@tanstack/react-form";
 
 import { api } from "@/trpc/react";
@@ -42,7 +41,7 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
   if (!isTouched || !errors.length) return null;
   return (
     <p className="mt-1 text-xs text-red-500">
-      {errors.map((e) => (typeof e === "string" ? e : e?.message)).join(", ")}
+      {errors.map((e: unknown) => (typeof e === "string" ? e : (e as { message?: string })?.message ?? "")).join(", ")}
     </p>
   );
 }
@@ -332,7 +331,7 @@ export function PackageForm({
                   {(subField) => (
                     <div className="flex items-center gap-2">
                       <Input
-                        value={subField.state.value as string}
+                        value={subField.state.value}
                         onBlur={subField.handleBlur}
                         onChange={(e) =>
                           subField.handleChange(e.target.value)

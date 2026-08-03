@@ -85,18 +85,9 @@ export function Header() {
               Sign out ({session.user.name?.split(" ")[0] ?? "User"})
             </button>
           ) : (
-            <button
-              type="button"
-              className="auth-nav-btn"
-              onClick={() =>
-                authClient.signIn.social({
-                  provider: "github",
-                  callbackURL: "/",
-                })
-              }
-            >
+            <Link href="/login" className="auth-nav-btn">
               Sign in
-            </button>
+            </Link>
           )}
         </nav>
       </div>

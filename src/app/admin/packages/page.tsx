@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Package, Plus, Pencil, Loader2 } from "lucide-react";
+import { Check, Package, Plus, Pencil } from "lucide-react";
 
 import { api } from "@/trpc/react";
 import { PackageDialog } from "./_components/package-dialog";
@@ -52,7 +52,7 @@ export default function AdminPackagesPage() {
       description: pkg.description,
       price: pkg.price,
       billingCycle: pkg.billingCycle,
-      features: pkg.features as string[],
+      features: pkg.features,
       purchaseUrl: pkg.purchaseUrl,
       isFeatured: pkg.isFeatured,
       isActive: pkg.isActive,
@@ -174,7 +174,7 @@ export default function AdminPackagesPage() {
                 )}
 
                 <ul className="mt-4 flex flex-col gap-2">
-                  {(pkg.features as string[]).map((feature, i) => (
+                  {pkg.features.map((feature, i) => (
                     <li
                       key={i}
                       className="flex items-center gap-2 text-xs font-semibold text-[var(--ink)]"

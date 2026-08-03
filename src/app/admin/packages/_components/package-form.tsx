@@ -17,8 +17,8 @@ export interface PackageFormValues {
   name: string;
   tagline: string;
   description: string;
-  priceInDollars: string; // user-facing, stored as cents
-  billingCycle: "one_time" | "monthly" | "yearly";
+  priceInDollars: string; // user-facing, stored as cents (blank = no price)
+  billingCycle: "one_time" | "monthly" | "yearly" | "";
   features: string[];
   purchaseUrl: string;
   isFeatured: boolean;
@@ -110,7 +110,7 @@ export function PackageForm({
       tagline: defaultValues?.tagline ?? "",
       description: defaultValues?.description ?? "",
       priceInDollars: defaultValues?.priceInDollars ?? "",
-      billingCycle: defaultValues?.billingCycle ?? "one_time",
+      billingCycle: (defaultValues?.billingCycle ?? ""),
       features: defaultValues?.features?.length
         ? defaultValues.features
         : [""],
@@ -120,9 +120,9 @@ export function PackageForm({
       displayOrder: defaultValues?.displayOrder ?? 0,
     },
     onSubmit: async ({ value }) => {
-      const priceInCents = Math.round(
-        parseFloat(value.priceInDollars || "0") * 100,
-      );
+      const parsedPrice = value.priceInDollars.trim() !== ""
+        ? Math.round(parseFloat(value.priceInDollars) * 100)
+        : null;
       const cleanFeatures = value.features.filter((f) => f.trim() !== "");
 
       const payload = {
@@ -130,8 +130,8 @@ export function PackageForm({
         name: value.name,
         tagline: value.tagline,
         description: value.description || undefined,
-        price: priceInCents,
-        billingCycle: value.billingCycle,
+        price: parsedPrice,
+        billingCycle: value.billingCycle !== "" ? value.billingCycle : null,
         features: cleanFeatures,
         purchaseUrl: value.purchaseUrl || undefined,
         isFeatured: value.isFeatured,
@@ -219,22 +219,16 @@ export function PackageForm({
       </div>
 
       {/* Tagline */}
-      <form.Field
-        name="tagline"
-        validators={{
-          onBlur: ({ value }) =>
-            !value.trim() ? "Tagline is required" : undefined,
-        }}
-      >
+      <form.Field name="tagline">
         {(field) => (
           <div>
-            <Label required>Tagline</Label>
+            <Label>Tagline</Label>
             <Input
               id={field.name}
               value={field.state.value}
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
-              placeholder="Short marketing hook"
+              placeholder="Short marketing hook (optional)"
               className="border-[rgba(18,58,90,0.2)] focus-visible:ring-[var(--teal)]"
             />
             <FieldInfo field={field} />
@@ -262,19 +256,10 @@ export function PackageForm({
 
       {/* Price + Billing cycle */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <form.Field
-          name="priceInDollars"
-          validators={{
-            onBlur: ({ value }) => {
-              const n = parseFloat(value);
-              if (isNaN(n) || n < 0) return "Enter a valid price";
-              return undefined;
-            },
-          }}
-        >
+        <form.Field name="priceInDollars">
           {(field) => (
             <div>
-              <Label required>Price (USD)</Label>
+              <Label>Price (USD)</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-[rgba(23,50,74,0.5)]">
                   $
@@ -287,7 +272,7 @@ export function PackageForm({
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  placeholder="49.00"
+                  placeholder="49.00 (leave blank if free or TBD)"
                   className="border-[rgba(18,58,90,0.2)] pl-7 focus-visible:ring-[var(--teal)]"
                 />
               </div>
@@ -299,18 +284,19 @@ export function PackageForm({
         <form.Field name="billingCycle">
           {(field) => (
             <div>
-              <Label required>Billing Cycle</Label>
+              <Label>Billing Cycle</Label>
               <select
                 id={field.name}
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) =>
                   field.handleChange(
-                    e.target.value as "one_time" | "monthly" | "yearly",
+                    e.target.value as "one_time" | "monthly" | "yearly" | "",
                   )
                 }
                 className="h-9 w-full rounded-xl border border-[rgba(18,58,90,0.2)] bg-white px-3 text-sm text-[var(--navy)] focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
               >
+                <option value="">— No billing cycle —</option>
                 <option value="one_time">One-time</option>
                 <option value="monthly">Monthly</option>
                 <option value="yearly">Yearly</option>

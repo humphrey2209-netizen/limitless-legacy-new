@@ -44,10 +44,10 @@ interface PackageDialogProps {
     id: string;
     name: string;
     slug: string;
-    tagline: string;
+    tagline: string | null;
     description?: string | null;
-    price: number; // cents
-    billingCycle: string;
+    price: number | null; // cents
+    billingCycle: string | null;
     features: string[];
     purchaseUrl?: string | null;
     isFeatured: boolean;
@@ -76,13 +76,17 @@ export function PackageDialog({
     ? {
         slug: packageData.slug,
         name: packageData.name,
-        tagline: packageData.tagline,
+        tagline: packageData.tagline ?? "",
         description: packageData.description ?? "",
-        priceInDollars: (packageData.price / 100).toFixed(2),
-        billingCycle: packageData.billingCycle as
+        priceInDollars:
+          packageData.price != null
+            ? (packageData.price / 100).toFixed(2)
+            : "",
+        billingCycle: (packageData.billingCycle ?? "") as
           | "one_time"
           | "monthly"
-          | "yearly",
+          | "yearly"
+          | "",
         features: packageData.features,
         purchaseUrl: packageData.purchaseUrl ?? "",
         isFeatured: packageData.isFeatured,

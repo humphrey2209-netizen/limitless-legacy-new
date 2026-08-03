@@ -97,12 +97,10 @@ export const packages = pgTable("package", {
   id: text("id").primaryKey(),
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
-  tagline: text("tagline").notNull(),
+  tagline: text("tagline"),
   description: text("description"),
-  price: integer("price").notNull(), // in cents
-  billingCycle: varchar("billing_cycle", { length: 50 })
-    .default("one_time")
-    .notNull(),
+  price: integer("price"), // in cents, optional
+  billingCycle: varchar("billing_cycle", { length: 50 }),
   features: jsonb("features").$type<string[]>().notNull(),
   purchaseUrl: text("purchase_url"),
   isFeatured: boolean("is_featured").default(false).notNull(),

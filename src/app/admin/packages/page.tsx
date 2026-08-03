@@ -25,10 +25,10 @@ export default function AdminPackagesPage() {
         id: string;
         name: string;
         slug: string;
-        tagline: string;
+        tagline: string | null;
         description?: string | null;
-        price: number;
-        billingCycle: string;
+        price: number | null;
+        billingCycle: string | null;
         features: string[];
         purchaseUrl?: string | null;
         isFeatured: boolean;
@@ -147,10 +147,15 @@ export default function AdminPackagesPage() {
                     {pkg.isActive ? "Active" : "Inactive"}
                   </span>
                   <span className="text-sm font-extrabold text-[var(--navy)]">
-                    ${(pkg.price / 100).toFixed(2)}{" "}
-                    <span className="text-xs font-semibold text-[rgba(23,50,74,0.6)]">
-                      {billingLabel(pkg.billingCycle)}
-                    </span>
+                    {pkg.price != null
+                      ? `$${(pkg.price / 100).toFixed(2)}`
+                      : <span className="text-xs font-semibold italic text-[rgba(23,50,74,0.45)]">No price set</span>
+                    }{" "}
+                    {pkg.billingCycle && (
+                      <span className="text-xs font-semibold text-[rgba(23,50,74,0.6)]">
+                        {billingLabel(pkg.billingCycle)}
+                      </span>
+                    )}
                   </span>
                 </div>
 

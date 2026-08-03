@@ -63,6 +63,8 @@ export const session = pgTable("session", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  // Better Auth organization plugin
+  activeOrganizationId: text("active_organization_id"),
 });
 
 export const account = pgTable("account", {
@@ -90,6 +92,50 @@ export const verification = pgTable("verification", {
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").$defaultFn(() => new Date()),
   updatedAt: timestamp("updated_at").$defaultFn(() => new Date()),
+});
+
+// ─── Organization Plugin Tables ─────────────────────────────────────────────
+
+export const organization = pgTable("organization", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  logo: text("logo"),
+  metadata: text("metadata"),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export const orgMember = pgTable("member", {
+  id: text("id").primaryKey(),
+  organizationId: text("organization_id")
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  role: varchar("role", { length: 100 }).notNull().default("member"),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export const invitation = pgTable("invitation", {
+  id: text("id").primaryKey(),
+  organizationId: text("organization_id")
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
+  email: text("email").notNull(),
+  role: varchar("role", { length: 100 }),
+  status: varchar("status", { length: 50 }).notNull().default("pending"),
+  expiresAt: timestamp("expires_at").notNull(),
+  inviterId: text("inviter_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 // 2. Packages & Pricing Table
@@ -224,6 +270,36 @@ export const userRelations = relations(user, ({ many }) => ({
   subscriptions: many(userSubscriptions),
   assessmentSubmissions: many(assessmentSubmissions),
   resourceDownloads: many(resourceDownloads),
+  orgMembers: many(orgMember),
+  invitations: many(invitation, { relationName: "inviter" }),
+}));
+
+export const organizationRelations = relations(organization, ({ many }) => ({
+  members: many(orgMember),
+  invitations: many(invitation),
+}));
+
+export const orgMemberRelations = relations(orgMember, ({ one }) => ({
+  organization: one(organization, {
+    fields: [orgMember.organizationId],
+    references: [organization.id],
+  }),
+  user: one(user, {
+    fields: [orgMember.userId],
+    references: [user.id],
+  }),
+}));
+
+export const invitationRelations = relations(invitation, ({ one }) => ({
+  organization: one(organization, {
+    fields: [invitation.organizationId],
+    references: [organization.id],
+  }),
+  inviter: one(user, {
+    fields: [invitation.inviterId],
+    references: [user.id],
+    relationName: "inviter",
+  }),
 }));
 
 export const accountRelations = relations(account, ({ one }) => ({

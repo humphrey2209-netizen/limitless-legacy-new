@@ -1,12 +1,14 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { organization } from "better-auth/plugins";
 
 import { env } from "@/env";
 import { db } from "@/server/db";
+import { ac, admin, customer, member, owner } from "./permissions";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: "pg", // or "pg" or "mysql"
+    provider: "pg",
   }),
   emailAndPassword: {
     enabled: true,
@@ -18,6 +20,17 @@ export const auth = betterAuth({
       redirectURI: "http://localhost:3000/api/auth/callback/github",
     },
   },
+  plugins: [
+    organization({
+      ac,
+      roles: {
+        owner,
+        admin,
+        member,
+        customer,
+      },
+    }),
+  ],
 });
 
 export type Session = typeof auth.$Infer.Session;

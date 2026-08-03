@@ -1,5 +1,20 @@
+import { organizationClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 
-export const authClient = createAuthClient();
+import { ac, admin, customer, member, owner } from "./permissions";
+
+export const authClient = createAuthClient({
+  plugins: [
+    organizationClient({
+      ac,
+      roles: {
+        owner,
+        admin,
+        member,
+        customer,
+      },
+    }),
+  ],
+});
 
 export type Session = typeof authClient.$Infer.Session;

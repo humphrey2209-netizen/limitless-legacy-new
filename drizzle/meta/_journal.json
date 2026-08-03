@@ -8,6 +8,13 @@
       "when": 1785658218817,
       "tag": "0000_cheerful_nightcrawler",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785798298706,
+      "tag": "0001_free_baron_strucker",
+      "breakpoints": true
     }
   ]
 }

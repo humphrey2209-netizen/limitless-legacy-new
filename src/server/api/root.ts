@@ -1,3 +1,4 @@
+import { assessmentRouter } from "@/server/api/routers/assessment";
 import { packagesRouter } from "@/server/api/routers/packages";
 import { postRouter } from "@/server/api/routers/post";
 import { resourcesRouter } from "@/server/api/routers/resources";
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   post: postRouter,
   packages: packagesRouter,
   resources: resourcesRouter,
+  assessment: assessmentRouter,
 });
 
 // export type definition of API

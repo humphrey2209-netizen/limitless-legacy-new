@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { api } from "@/trpc/react";
+
 interface AssessmentAnswers {
   age?: string;
   grade?: string;
@@ -116,6 +118,8 @@ export default function ParentAssessmentPage() {
   });
   const [isCompleted, setIsCompleted] = useState(false);
 
+  const submitMutation = api.assessment.submit.useMutation();
+
   const isStepValid = () => {
     if (currentStep === 0) {
       return Boolean(answers.age && answers.grade);
@@ -141,6 +145,14 @@ export default function ParentAssessmentPage() {
       setCurrentStep(currentStep + 1);
     } else {
       setIsCompleted(true);
+      submitMutation.mutate({
+        childAge: answers.age,
+        childGrade: answers.grade,
+        supportAreas: answers.supportAreas ?? [],
+        challenges: answers.challenges ?? [],
+        preferences: answers.preferences ?? [],
+        goals: answers.goals ?? [],
+      });
     }
   };
 

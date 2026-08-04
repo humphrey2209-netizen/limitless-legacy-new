@@ -10,6 +10,7 @@ import {
   FolderKanban,
   History,
   LayoutDashboard,
+  Lock,
   LogOut,
   Package,
   Settings,
@@ -31,12 +32,29 @@ import {
 } from "@/components/ui/sidebar";
 import { authClient } from "@/server/better-auth/client";
 
-const mainNavItems = [
+// ─── Nav item definitions ────────────────────────────────────────────────────
+
+/** Visible to all authenticated users */
+const openNavItems = [
   {
     title: "Overview",
     url: "/admin",
     icon: LayoutDashboard,
   },
+  {
+    title: "Analytics & Reports",
+    url: "/admin/analytics",
+    icon: BarChart3,
+  },
+  {
+    title: "Parent Assessment",
+    url: "/admin/assessment",
+    icon: ClipboardList,
+  },
+];
+
+/** Admin-only sections */
+const adminNavItems = [
   {
     title: "Site Content",
     url: "/admin/content",
@@ -53,22 +71,9 @@ const mainNavItems = [
     icon: FolderKanban,
   },
   {
-    title: "Parent Assessment",
-    url: "/admin/assessment",
-    icon: ClipboardList,
-  },
-];
-
-const managementNavItems = [
-  {
     title: "Users & Accounts",
     url: "/admin/users",
     icon: Users,
-  },
-  {
-    title: "Analytics & Reports",
-    url: "/admin/analytics",
-    icon: BarChart3,
   },
   {
     title: "Settings & Keys",
@@ -85,9 +90,35 @@ const systemNavItems = [
   },
 ];
 
-export function AdminSidebar() {
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
+
+  function NavItem({ item }: { item: { title: string; url: string; icon: React.ElementType } }) {
+    const isActive =
+      item.url === "/admin"
+        ? pathname === "/admin"
+        : pathname.startsWith(item.url);
+    return (
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          isActive={isActive}
+          className={
+            isActive
+              ? "bg-[rgba(79,175,168,0.15)] text-[var(--navy)] font-bold"
+              : "text-[var(--ink)] hover:bg-[rgba(248,244,235,0.8)] font-semibold"
+          }
+        >
+          <Link href={item.url} className="flex w-full items-center gap-2.5">
+            <item.icon className="h-4 w-4 text-[var(--navy)]" />
+            <span>{item.title}</span>
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    );
+  }
 
   return (
     <Sidebar className="border-r border-[rgba(18,58,90,0.12)] bg-[#ffffff]">
@@ -112,112 +143,76 @@ export function AdminSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="px-2 py-3">
+        {/* Open to all authenticated users */}
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs font-extrabold uppercase tracking-wider text-[rgba(18,58,90,0.6)] px-2 mb-1">
-            Main Management
+            Dashboard
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainNavItems.map((item) => {
-                const isActive =
-                  item.url === "/admin"
-                    ? pathname === "/admin"
-                    : pathname.startsWith(item.url);
-                return (
-                  <SidebarMenuItem key={item.url}>
-                    <SidebarMenuButton
-                      isActive={isActive}
-                      className={
-                        isActive
-                          ? "bg-[rgba(79,175,168,0.15)] text-[var(--navy)] font-bold"
-                          : "text-[var(--ink)] hover:bg-[rgba(248,244,235,0.8)] font-semibold"
-                      }
-                    >
-                      <Link href={item.url} className="flex w-full items-center gap-2.5">
-                        <item.icon className="h-4 w-4 text-[var(--navy)]" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {openNavItems.map((item) => (
+                <NavItem key={item.url} item={item} />
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Admin-only management sections */}
         <SidebarGroup className="mt-2">
-          <SidebarGroupLabel className="text-xs font-extrabold uppercase tracking-wider text-[rgba(18,58,90,0.6)] px-2 mb-1">
-            Administration
+          <SidebarGroupLabel className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-[rgba(18,58,90,0.6)] px-2 mb-1">
+            {isAdmin ? (
+              "Administration"
+            ) : (
+              <>
+                <Lock className="h-3 w-3" />
+                Administration
+              </>
+            )}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {managementNavItems.map((item) => {
-                const isActive = pathname.startsWith(item.url);
-                return (
-                  <SidebarMenuItem key={item.url}>
-                    <SidebarMenuButton
-                      isActive={isActive}
-                      className={
-                        isActive
-                          ? "bg-[rgba(79,175,168,0.15)] text-[var(--navy)] font-bold"
-                          : "text-[var(--ink)] hover:bg-[rgba(248,244,235,0.8)] font-semibold"
-                      }
-                    >
-                      <Link href={item.url} className="flex w-full items-center gap-2.5">
-                        <item.icon className="h-4 w-4 text-[var(--navy)]" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {isAdmin ? (
+                adminNavItems.map((item) => (
+                  <NavItem key={item.url} item={item} />
+                ))
+              ) : (
+                <li className="px-2 py-2 text-[11px] font-semibold text-[rgba(23,50,74,0.45)] italic">
+                  Admin access required
+                </li>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup className="mt-2">
-          <SidebarGroupLabel className="text-xs font-extrabold uppercase tracking-wider text-[rgba(18,58,90,0.6)] px-2 mb-1">
-            Tools & System
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {systemNavItems.map((item) => {
-                const isActive = pathname.startsWith(item.url);
-                return (
-                  <SidebarMenuItem key={item.url}>
-                    <SidebarMenuButton
-                      isActive={isActive}
-                      className={
-                        isActive
-                          ? "bg-[rgba(79,175,168,0.15)] text-[var(--navy)] font-bold"
-                          : "text-[var(--ink)] hover:bg-[rgba(248,244,235,0.8)] font-semibold"
-                      }
-                    >
-                      <Link href={item.url} className="flex w-full items-center gap-2.5">
-                        <item.icon className="h-4 w-4 text-[var(--navy)]" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {/* Tools & system – admin only */}
+        {isAdmin && (
+          <SidebarGroup className="mt-2">
+            <SidebarGroupLabel className="text-xs font-extrabold uppercase tracking-wider text-[rgba(18,58,90,0.6)] px-2 mb-1">
+              Tools & System
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {systemNavItems.map((item) => (
+                  <NavItem key={item.url} item={item} />
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter className="border-t border-[rgba(18,58,90,0.08)] p-3">
         <div className="flex items-center justify-between gap-2 rounded-xl bg-[#FAF7F0] p-2.5">
           <div className="flex items-center gap-2 overflow-hidden">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--navy)] text-white font-bold text-xs">
-              {session?.user.name ? session.user.name.charAt(0).toUpperCase() : "A"}
+              {session?.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
             </div>
             <div className="flex flex-col truncate">
               <span className="truncate text-xs font-bold text-[var(--navy)]">
-                {session?.user.name ?? "Administrator"}
+                {session?.user.name ?? "User"}
               </span>
-              <span className="truncate text-[10px] text-[var(--teal)] font-medium">
-                {session?.user.email ?? "Admin Workspace"}
+              <span className="truncate text-[10px] font-medium" style={{ color: isAdmin ? "var(--teal)" : "rgba(23,50,74,0.5)" }}>
+                {isAdmin ? "Administrator" : "View-only access"}
               </span>
             </div>
           </div>

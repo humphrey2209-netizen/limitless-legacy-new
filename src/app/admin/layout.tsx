@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   description: "Limitless Legacy site management and content administration portal.",
 };
 
+/** Pages that any authenticated user can see (overview, analytics, assessment read) */
+const PUBLIC_ADMIN_PATHS = ["/admin", "/admin/analytics", "/admin/assessment"];
+
 export default async function AdminLayout({
   children,
 }: {
@@ -24,11 +27,13 @@ export default async function AdminLayout({
     redirect("/login?redirectTo=/admin");
   }
 
+  const isAdmin = (session.user as { role?: string }).role === "admin";
+
   return (
     <TooltipProvider>
       <SidebarProvider defaultOpen={true}>
         <div className="flex min-h-screen w-full bg-[#FAF7F0]">
-          <AdminSidebar />
+          <AdminSidebar isAdmin={isAdmin} />
           <SidebarInset className="flex min-h-screen flex-1 flex-col bg-[#FAF7F0]">
             <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-[rgba(18,58,90,0.1)] bg-white/90 px-4 backdrop-blur-md">
               <div className="flex items-center gap-3">
@@ -39,6 +44,11 @@ export default async function AdminLayout({
                 </span>
               </div>
               <div className="flex items-center gap-3">
+                {!isAdmin && (
+                  <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+                    View only
+                  </span>
+                )}
                 <Link
                   href="/"
                   className="flex items-center gap-1.5 rounded-full border border-[rgba(18,58,90,0.15)] bg-white px-3 py-1.5 text-xs font-bold text-[var(--navy)] transition hover:bg-[rgba(79,175,168,0.12)]"

@@ -2,8 +2,8 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import {
+  adminProcedure,
   createTRPCRouter,
-  protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
 import { siteContent } from "@/server/db/schema";
@@ -92,7 +92,7 @@ export const contentRouter = createTRPCRouter({
   /**
    * Bulk update content items by passing key-value pairs.
    */
-  updateMany: protectedProcedure
+  updateMany: adminProcedure
     .input(z.object({ items: z.record(z.string(), z.string()) }))
     .mutation(async ({ ctx, input }) => {
       const updates = Object.entries(input.items);
@@ -128,7 +128,7 @@ export const contentRouter = createTRPCRouter({
   /**
    * Reset content keys back to hardcoded default values.
    */
-  resetDefaults: protectedProcedure.mutation(async ({ ctx }) => {
+  resetDefaults: adminProcedure.mutation(async ({ ctx }) => {
     for (const item of defaultSiteContentItems) {
       const existing = await ctx.db
         .select()

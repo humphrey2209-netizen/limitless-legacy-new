@@ -2,8 +2,8 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import {
+  adminProcedure,
   createTRPCRouter,
-  protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
 import { packages } from "@/server/db/schema";
@@ -32,7 +32,7 @@ export const packagesRouter = createTRPCRouter({
     });
   }),
 
-  create: protectedProcedure
+  create: adminProcedure
     .input(packageInputSchema)
     .mutation(async ({ ctx, input }) => {
       const id = crypto.randomUUID();
@@ -49,7 +49,7 @@ export const packagesRouter = createTRPCRouter({
       return { id };
     }),
 
-  update: protectedProcedure
+  update: adminProcedure
     .input(
       z.object({
         id: z.string().min(1),
@@ -73,7 +73,7 @@ export const packagesRouter = createTRPCRouter({
       return { id: input.id };
     }),
 
-  delete: protectedProcedure
+  delete: adminProcedure
     .input(z.object({ id: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.delete(packages).where(eq(packages.id, input.id));

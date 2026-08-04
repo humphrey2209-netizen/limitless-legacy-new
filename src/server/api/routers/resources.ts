@@ -3,8 +3,8 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import {
+  adminProcedure,
   createTRPCRouter,
-  protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
 import { resources } from "@/server/db/schema";
@@ -32,7 +32,7 @@ export const resourcesRouter = createTRPCRouter({
     });
   }),
 
-  getSignedUploadUrl: protectedProcedure
+  getSignedUploadUrl: adminProcedure
     .input(
       z.object({
         filename: z.string().min(1),
@@ -69,7 +69,7 @@ export const resourcesRouter = createTRPCRouter({
       };
     }),
 
-  create: protectedProcedure
+  create: adminProcedure
     .input(resourceInputSchema)
     .mutation(async ({ ctx, input }) => {
       const id = crypto.randomUUID();
@@ -83,7 +83,7 @@ export const resourcesRouter = createTRPCRouter({
       return { id };
     }),
 
-  update: protectedProcedure
+  update: adminProcedure
     .input(
       z.object({
         id: z.string().min(1),
@@ -103,7 +103,7 @@ export const resourcesRouter = createTRPCRouter({
       return { id: input.id };
     }),
 
-  delete: protectedProcedure
+  delete: adminProcedure
     .input(z.object({ id: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.delete(resources).where(eq(resources.id, input.id));

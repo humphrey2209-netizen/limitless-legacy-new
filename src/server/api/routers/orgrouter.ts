@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { adminProcedure, createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { orgMember, organization, user } from "@/server/db/schema";
 
 const ORG_SLUG = "limitless-legacy";
@@ -69,7 +69,7 @@ export const organizationRouter = createTRPCRouter({
   /**
    * Add a user to the org or update their existing role.
    */
-  setMemberRole: protectedProcedure
+  setMemberRole: adminProcedure
     .input(
       z.object({
         userId: z.string().min(1),
@@ -116,7 +116,7 @@ export const organizationRouter = createTRPCRouter({
   /**
    * Remove a user from the org (they remain a registered user).
    */
-  removeMember: protectedProcedure
+  removeMember: adminProcedure
     .input(z.object({ userId: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db

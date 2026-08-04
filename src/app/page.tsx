@@ -1,20 +1,27 @@
+"use client";
+
 import Link from "next/link";
 
-import { HydrateClient } from "@/trpc/server";
+import { api } from "@/trpc/react";
 
-export default async function Home() {
+export default function Home() {
+  const { data: contentData } = api.content.getAll.useQuery();
+
+  const heroHeadline =
+    contentData?.map?.heroHeadline ??
+    "Personalized Learning Support Designed for Every Child";
+  const heroDescription =
+    contentData?.map?.heroDescription ??
+    "Personalized learning plans, educational activities, and parent support tools created to help children build confidence, strengthen skills, and reach their potential.";
+
   return (
-    <HydrateClient>
+    <>
       <section className="hero section">
         <div className="container hero-grid">
           <div>
             <p className="eyebrow">Inclusive learning support</p>
-            <h1>Personalized Learning Support Designed for Every Child</h1>
-            <p className="lead">
-              Personalized learning plans, educational activities, and parent
-              support tools created to help children build confidence, strengthen
-              skills, and reach their potential.
-            </p>
+            <h1>{heroHeadline}</h1>
+            <p className="lead">{heroDescription}</p>
             <div className="cta-row">
               <Link className="btn btn-primary" href="/packages">
                 Explore Learning Packages
@@ -94,6 +101,6 @@ export default async function Home() {
           </div>
         </div>
       </section>
-    </HydrateClient>
+    </>
   );
 }

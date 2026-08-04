@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+import { api } from "@/trpc/react";
+
 const ADMIN_EMAIL = "hello.limitlesslegacy@gmail.com";
 const ADMIN_PASSWORD = "limitlesslegacy#1";
-const STORAGE_KEY = "limitlessLegacyAdminContentV1";
 const AUTH_KEY = "limitlessLegacyAdminAuthV1";
 
 const defaultContent = {
@@ -54,19 +55,56 @@ export default function LegacyAdminPage() {
   const [content, setContent] = useState(defaultContent);
   const [saveStatus, setSaveStatus] = useState({ message: "", type: "" });
 
+  const utils = api.useUtils();
+  const { data: contentData } = api.content.getAll.useQuery();
+
+  const updateMutation = api.content.updateMany.useMutation({
+    onSuccess: async () => {
+      await utils.content.getAll.invalidate();
+      setSaveStatus({ message: "Changes saved directly to the database!", type: "success" });
+    },
+    onError: (err) => {
+      setSaveStatus({ message: err.message || "Failed to save.", type: "error" });
+    },
+  });
+
+  const resetMutation = api.content.resetDefaults.useMutation({
+    onSuccess: async () => {
+      await utils.content.getAll.invalidate();
+      setContent(defaultContent);
+      setSaveStatus({ message: "Defaults restored in database.", type: "success" });
+    },
+    onError: (err) => {
+      setSaveStatus({ message: err.message || "Failed to reset.", type: "error" });
+    },
+  });
+
   useEffect(() => {
     try {
       const authSaved = localStorage.getItem(AUTH_KEY) === "true";
       setIsLoggedIn(authSaved);
-      const savedRaw = localStorage.getItem(STORAGE_KEY);
-      const savedContent = savedRaw
-        ? (JSON.parse(savedRaw) as Partial<typeof defaultContent>)
-        : {};
-      setContent({ ...defaultContent, ...savedContent });
     } catch {
-      setContent(defaultContent);
+      setIsLoggedIn(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (contentData?.map) {
+      setContent({
+        brandName: contentData.map.brandName ?? defaultContent.brandName,
+        heroHeadline: contentData.map.heroHeadline ?? defaultContent.heroHeadline,
+        heroDescription: contentData.map.heroDescription ?? defaultContent.heroDescription,
+        aboutSummary: contentData.map.aboutSummary ?? defaultContent.aboutSummary,
+        footerDescription: contentData.map.footerDescription ?? defaultContent.footerDescription,
+        contactEmail: contentData.map.contactEmail ?? defaultContent.contactEmail,
+        starterPackage: contentData.map.starterPackage ?? defaultContent.starterPackage,
+        premiumPackage: contentData.map.premiumPackage ?? defaultContent.premiumPackage,
+        monthlyPackage: contentData.map.monthlyPackage ?? defaultContent.monthlyPackage,
+        assessmentDisclaimer: contentData.map.assessmentDisclaimer ?? defaultContent.assessmentDisclaimer,
+        resources: contentData.map.resources ?? defaultContent.resources,
+      });
+    }
+  }, [contentData]);
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,17 +127,15 @@ export default function LegacyAdminPage() {
 
   const handleContentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
-    setSaveStatus({
-      message: "Changes saved locally in this browser.",
-      type: "success",
-    });
+    setSaveStatus({ message: "", type: "" });
+    updateMutation.mutate({ items: content });
   };
 
   const handleResetDefaults = () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultContent));
-    setContent(defaultContent);
-    setSaveStatus({ message: "Defaults restored.", type: "success" });
+    if (confirm("Reset all content back to defaults in the database?")) {
+      setSaveStatus({ message: "", type: "" });
+      resetMutation.mutate();
+    }
   };
 
   return (
@@ -109,8 +145,7 @@ export default function LegacyAdminPage() {
           <p className="eyebrow">Legacy Admin</p>
           <h1>Legacy site administration</h1>
           <p className="lead">
-            Use this local admin editor to update legacy homepage copy, package
-            details, and resource library items. Changes are saved in your browser.
+            Use this admin editor to update site copy, package details, and resource library items directly in the database.
           </p>
         </div>
 
@@ -162,8 +197,7 @@ export default function LegacyAdminPage() {
               <div>
                 <h2>Content editor</h2>
                 <p className="admin-note">
-                  Edit the public-facing copy for the site. Use one line per item in
-                  the list fields.
+                  Edit the public-facing copy for the site. Changes save directly to PostgreSQL.
                 </p>
               </div>
               <button
@@ -300,12 +334,17 @@ export default function LegacyAdminPage() {
               </label>
 
               <div className="admin-actions">
-                <button className="btn btn-primary" type="submit">
-                  Save changes
+                <button
+                  className="btn btn-primary"
+                  type="submit"
+                  disabled={updateMutation.isPending}
+                >
+                  {updateMutation.isPending ? "Saving..." : "Save changes"}
                 </button>
                 <button
                   className="btn btn-secondary"
                   onClick={handleResetDefaults}
+                  disabled={resetMutation.isPending}
                   type="button"
                 >
                   Reset defaults

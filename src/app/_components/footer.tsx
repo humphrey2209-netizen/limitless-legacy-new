@@ -2,8 +2,16 @@
 
 import { usePathname } from "next/navigation";
 
+import { api } from "@/trpc/react";
+
 export function Footer() {
   const pathname = usePathname();
+  const { data: contentData } = api.content.getAll.useQuery();
+
+  const brandName = contentData?.map?.brandName ?? "Limitless Legacy";
+  const footerDescription =
+    contentData?.map?.footerDescription ??
+    "Inclusive learning support for children, families, and educators.";
 
   if (pathname.startsWith("/admin")) {
     return null;
@@ -13,10 +21,10 @@ export function Footer() {
     <footer className="site-footer">
       <div className="container footer-grid">
         <div>
-          <h3>Limitless Legacy</h3>
-          <p>Inclusive learning support for children, families, and educators.</p>
+          <h3>{brandName}</h3>
+          <p>{footerDescription}</p>
         </div>
-        <p>© {new Date().getFullYear()} Limitless Legacy. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} {brandName}. All rights reserved.</p>
       </div>
     </footer>
   );

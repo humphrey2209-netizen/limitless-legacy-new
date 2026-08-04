@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 
+import { api } from "@/trpc/react";
+
 export default function ContactPage() {
+  const { data: contentData } = api.content.getAll.useQuery();
+
+  const brandName = contentData?.map?.brandName ?? "Limitless Legacy";
+  const contactEmail =
+    contentData?.map?.contactEmail ?? "hello.limitlesslegacy@gmail.com";
+
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState<{
     message: string;
@@ -21,7 +29,7 @@ export default function ContactPage() {
 
     setStatus({
       message:
-        "Thank you! Your message has been sent. Connect this form to your email provider in production.",
+        "Thank you! Your message has been received.",
       type: "success",
     });
     setForm({ name: "", email: "", message: "" });
@@ -76,10 +84,7 @@ export default function ContactPage() {
               />
             </label>
             <p className="privacy-note">
-              By sending this message, you agree to be contacted about your
-              request. Production delivery should connect this form to a secure
-              inbox or form service and include final privacy policy and terms
-              pages.
+              By sending this message, you agree to be contacted about your request.
             </p>
             <button className="btn btn-primary" type="submit">
               Send Message
@@ -105,10 +110,10 @@ export default function ContactPage() {
               <li>Any learning goals or concerns</li>
             </ul>
             <p className="mt-4">
-              <strong>Email:</strong> hello.limitlesslegacy@gmail.com
+              <strong>Email:</strong> {contactEmail}
             </p>
             <p>
-              <strong>Brand:</strong> Limitless Legacy
+              <strong>Brand:</strong> {brandName}
             </p>
           </aside>
         </div>

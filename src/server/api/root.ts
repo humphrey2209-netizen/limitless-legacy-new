@@ -1,4 +1,5 @@
 import { assessmentRouter } from "@/server/api/routers/assessment";
+import { contentRouter } from "@/server/api/routers/content";
 import { organizationRouter } from "@/server/api/routers/orgrouter";
 import { packagesRouter } from "@/server/api/routers/packages";
 import { postRouter } from "@/server/api/routers/post";
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   assessment: assessmentRouter,
   org: organizationRouter,
   stats: statsRouter,
+  content: contentRouter,
 });
 
 // export type definition of API

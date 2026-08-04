@@ -263,6 +263,17 @@ export const contactSubmissions = pgTable("contact_submission", {
     .notNull(),
 });
 
+// 9. Site Content Table (Key-Value Content Editor)
+export const siteContent = pgTable("site_content", {
+  key: text("key").primaryKey(),
+  label: text("label").notNull(),
+  value: text("value").notNull(),
+  category: varchar("category", { length: 50 }).default("general").notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
 // Relations
 export const userRelations = relations(user, ({ many }) => ({
   account: many(account),

@@ -5,10 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { authClient } from "@/server/better-auth/client";
+import { api } from "@/trpc/react";
 
 export function Header() {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
+  const { data: contentData } = api.content.getAll.useQuery();
+
+  const brandName = contentData?.map?.brandName ?? "Limitless Legacy";
 
   if (pathname.startsWith("/admin")) {
     return null;
@@ -26,7 +30,7 @@ export function Header() {
             className="brand-logo"
             priority
           />
-          <span className="brand">Limitless Legacy</span>
+          <span className="brand">{brandName}</span>
         </Link>
         <nav className="main-nav" aria-label="Main navigation">
           <Link href="/" aria-current={pathname === "/" ? "page" : undefined}>
@@ -70,12 +74,6 @@ export function Header() {
           >
             Admin
           </Link>
-          {/*<Link
-            href="/legacy-admin"
-            aria-current={pathname === "/legacy-admin" ? "page" : undefined}
-          >
-            Legacy Admin
-          </Link>*/}
           {session ? (
             <button
               type="button"

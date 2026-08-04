@@ -1,23 +1,22 @@
-import { type Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "About | Limitless Legacy",
-  description:
-    "Educator-led, inclusive, practical, and child-centered learning support.",
-};
+import { api } from "@/trpc/react";
 
 export default function AboutPage() {
+  const { data: contentData } = api.content.getAll.useQuery();
+
+  const brandName = contentData?.map?.brandName ?? "Limitless Legacy";
+  const aboutSummary =
+    contentData?.map?.aboutSummary ??
+    `${brandName} creates accessible learning opportunities and practical tools for families and educators while honoring every learner’s unique path.`;
+
   return (
     <section className="section">
       <div className="container">
         <div className="page-intro">
           <p className="eyebrow">About</p>
           <h1>Educator-led, inclusive, practical, and child-centered support.</h1>
-          <p className="lead">
-            Limitless Legacy creates accessible learning opportunities and
-            practical tools for families and educators while honoring every
-            learner’s unique path.
-          </p>
+          <p className="lead">{aboutSummary}</p>
         </div>
 
         <div className="cards-grid three-up">

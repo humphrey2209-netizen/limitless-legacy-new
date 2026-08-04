@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowUpRight,
+  Calendar,
   CheckCircle2,
   ClipboardList,
   FileText,
@@ -8,11 +11,15 @@ import {
   History,
   Package,
   ShieldCheck,
-  TrendingUp,
+  User,
   Users,
 } from "lucide-react";
 
+import { api } from "@/trpc/react";
+
 export default function AdminDashboardPage() {
+  const { data: stats, isLoading } = api.stats.getOverview.useQuery();
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -20,30 +27,37 @@ export default function AdminDashboardPage() {
           Admin Dashboard Overview
         </h1>
         <p className="text-sm font-medium text-[rgba(23,50,74,0.8)]">
-          Manage your platform content, packages, assessment tools, and user activity.
+          Real-time metrics for platform content, packages, assessment tools, and user activity.
         </p>
       </div>
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Total Users */}
         <div className="flex flex-col justify-between rounded-2xl border border-[rgba(18,58,90,0.1)] bg-white p-5 shadow-sm transition hover:shadow-md">
           <div className="flex items-center justify-between">
             <span className="text-xs font-extrabold uppercase tracking-wider text-[var(--teal)]">
-              Active Users
+              Registered Users
             </span>
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[rgba(79,175,168,0.15)] text-[var(--navy)]">
               <Users className="h-5 w-5" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="text-3xl font-black text-[var(--navy)]">1,248</span>
+            {isLoading ? (
+              <div className="h-9 w-20 animate-pulse rounded bg-[rgba(18,58,90,0.08)]" />
+            ) : (
+              <span className="text-3xl font-black text-[var(--navy)]">
+                {stats?.totalUsers.toLocaleString() ?? 0}
+              </span>
+            )}
             <div className="mt-1 flex items-center gap-1 text-xs font-bold text-emerald-600">
-              <TrendingUp className="h-3.5 w-3.5" />
-              <span>+14% from last month</span>
+              <span>Database synced</span>
             </div>
           </div>
         </div>
 
+        {/* Active Packages */}
         <div className="flex flex-col justify-between rounded-2xl border border-[rgba(18,58,90,0.1)] bg-white p-5 shadow-sm transition hover:shadow-md">
           <div className="flex items-center justify-between">
             <span className="text-xs font-extrabold uppercase tracking-wider text-[var(--teal)]">
@@ -54,14 +68,20 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <div className="mt-4">
-            <span className="text-3xl font-black text-[var(--navy)]">326</span>
+            {isLoading ? (
+              <div className="h-9 w-20 animate-pulse rounded bg-[rgba(18,58,90,0.08)]" />
+            ) : (
+              <span className="text-3xl font-black text-[var(--navy)]">
+                {stats?.activePackages ?? 0}
+              </span>
+            )}
             <div className="mt-1 flex items-center gap-1 text-xs font-bold text-emerald-600">
-              <TrendingUp className="h-3.5 w-3.5" />
-              <span>+8% active subscriptions</span>
+              <span>{stats?.totalPackages ?? 0} total packages configured</span>
             </div>
           </div>
         </div>
 
+        {/* Completed Assessments */}
         <div className="flex flex-col justify-between rounded-2xl border border-[rgba(18,58,90,0.1)] bg-white p-5 shadow-sm transition hover:shadow-md">
           <div className="flex items-center justify-between">
             <span className="text-xs font-extrabold uppercase tracking-wider text-[var(--teal)]">
@@ -72,31 +92,128 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <div className="mt-4">
-            <span className="text-3xl font-black text-[var(--navy)]">4,892</span>
+            {isLoading ? (
+              <div className="h-9 w-20 animate-pulse rounded bg-[rgba(18,58,90,0.08)]" />
+            ) : (
+              <span className="text-3xl font-black text-[var(--navy)]">
+                {stats?.completedAssessments.toLocaleString() ?? 0}
+              </span>
+            )}
             <div className="mt-1 flex items-center gap-1 text-xs font-bold text-emerald-600">
-              <TrendingUp className="h-3.5 w-3.5" />
-              <span>+24% completions</span>
+              <span>Parent submissions</span>
             </div>
           </div>
         </div>
 
+        {/* Resource Downloads / Resources */}
         <div className="flex flex-col justify-between rounded-2xl border border-[rgba(18,58,90,0.1)] bg-white p-5 shadow-sm transition hover:shadow-md">
           <div className="flex items-center justify-between">
             <span className="text-xs font-extrabold uppercase tracking-wider text-[var(--teal)]">
-              Resource Downloads
+              Resource Library
             </span>
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[rgba(213,168,61,0.2)] text-[var(--navy)]">
               <FolderKanban className="h-5 w-5" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="text-3xl font-black text-[var(--navy)]">8,104</span>
+            {isLoading ? (
+              <div className="h-9 w-20 animate-pulse rounded bg-[rgba(18,58,90,0.08)]" />
+            ) : (
+              <span className="text-3xl font-black text-[var(--navy)]">
+                {stats?.totalResources ?? 0}
+              </span>
+            )}
             <div className="mt-1 flex items-center gap-1 text-xs font-bold text-emerald-600">
-              <TrendingUp className="h-3.5 w-3.5" />
-              <span>+19% resource grabs</span>
+              <span>{stats?.totalDownloads ?? 0} downloads recorded</span>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Recent Submissions Feed */}
+      <div className="rounded-2xl border border-[rgba(18,58,90,0.1)] bg-white p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-extrabold text-[var(--navy)]">
+              Recent Assessment Activity
+            </h2>
+            <p className="text-xs text-[rgba(23,50,74,0.7)]">
+              Latest parent assessments submitted to the platform.
+            </p>
+          </div>
+          <Link
+            href="/admin/assessment"
+            className="flex items-center gap-1 text-xs font-bold text-[var(--teal)] hover:underline"
+          >
+            View All Submissions <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+
+        {isLoading && (
+          <div className="flex flex-col gap-2">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="h-16 w-full animate-pulse rounded-xl bg-[#FAF7F0]"
+              />
+            ))}
+          </div>
+        )}
+
+        {!isLoading && (!stats?.recentSubmissions || stats.recentSubmissions.length === 0) && (
+          <div className="flex flex-col items-center justify-center py-8 text-center border border-dashed border-[rgba(18,58,90,0.15)] rounded-xl bg-[#FAF7F0]/50">
+            <ClipboardList className="h-8 w-8 text-[rgba(18,58,90,0.3)] mb-1" />
+            <p className="text-xs font-bold text-[var(--navy)]">No assessment submissions yet</p>
+            <p className="text-[11px] text-[rgba(23,50,74,0.6)]">
+              When parents submit assessments, their entries will appear here live.
+            </p>
+          </div>
+        )}
+
+        {!isLoading && stats?.recentSubmissions && stats.recentSubmissions.length > 0 && (
+          <div className="flex flex-col gap-2">
+            {stats.recentSubmissions.map((sub) => {
+              const dateStr = new Date(sub.createdAt).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+              const supportAreas = sub.supportAreas ?? [];
+
+              return (
+                <div
+                  key={sub.id}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-xl bg-[#FAF7F0] p-3 text-xs"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[rgba(79,175,168,0.2)] text-[var(--navy)] font-bold">
+                      <User className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-[var(--navy)]">
+                          {sub.user?.name ?? "Guest Visitor"}
+                        </span>
+                        <span className="rounded-md bg-white px-2 py-0.5 text-[10px] font-extrabold text-[var(--teal)] border border-[rgba(18,58,90,0.1)]">
+                          Age {sub.childAge ?? "N/A"} · Grade {sub.childGrade ?? "N/A"}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[rgba(23,50,74,0.7)] mt-0.5">
+                        Focus: {supportAreas.slice(0, 2).join(", ") || "General Support"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <span className="flex items-center gap-1 text-[11px] font-medium text-[rgba(23,50,74,0.6)] shrink-0">
+                    <Calendar className="h-3 w-3 text-[var(--teal)]" />
+                    {dateStr}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Admin Sections Quick Navigation */}
@@ -135,7 +252,7 @@ export default function AdminDashboardPage() {
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-[var(--navy)] text-base flex items-center gap-1">
-                Packages & Pricing <ArrowUpRight className="h-4 w-4 text-[var(--teal)]" />
+                Packages &amp; Pricing <ArrowUpRight className="h-4 w-4 text-[var(--teal)]" />
               </span>
               <span className="text-xs text-[rgba(23,50,74,0.8)] mt-0.5">
                 Manage Starter, Premium, and Monthly Support plans.
@@ -172,7 +289,7 @@ export default function AdminDashboardPage() {
                 Parent Assessment <ArrowUpRight className="h-4 w-4 text-[var(--teal)]" />
               </span>
               <span className="text-xs text-[rgba(23,50,74,0.8)] mt-0.5">
-                Configure assessment questions and recommendation logic.
+                Configure assessment questions and view parent submissions.
               </span>
             </div>
           </Link>
@@ -186,10 +303,10 @@ export default function AdminDashboardPage() {
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-[var(--navy)] text-base flex items-center gap-1">
-                Users & Accounts <ArrowUpRight className="h-4 w-4 text-[var(--teal)]" />
+                Users &amp; Roles <ArrowUpRight className="h-4 w-4 text-[var(--teal)]" />
               </span>
               <span className="text-xs text-[rgba(23,50,74,0.8)] mt-0.5">
-                View registered users, roles, and session activity.
+                View registered users, assign roles, and manage memberships.
               </span>
             </div>
           </Link>
@@ -219,7 +336,7 @@ export default function AdminDashboardPage() {
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-emerald-600" />
             <h3 className="text-base font-extrabold text-[var(--navy)]">
-              System Status & Integration Health
+              System Status &amp; Integration Health
             </h3>
           </div>
           <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
@@ -234,13 +351,13 @@ export default function AdminDashboardPage() {
             </span>
           </div>
           <div className="flex items-center justify-between rounded-xl bg-[#FAF7F0] p-3 text-xs">
-            <span className="font-semibold text-[var(--navy)]">Vercel Postgres</span>
+            <span className="font-semibold text-[var(--navy)]">PostgreSQL Database</span>
             <span className="flex items-center gap-1 font-bold text-emerald-600">
               <CheckCircle2 className="h-3.5 w-3.5" /> Connected
             </span>
           </div>
           <div className="flex items-center justify-between rounded-xl bg-[#FAF7F0] p-3 text-xs">
-            <span className="font-semibold text-[var(--navy)]">Drizzle ORM</span>
+            <span className="font-semibold text-[var(--navy)]">Drizzle ORM &amp; tRPC</span>
             <span className="flex items-center gap-1 font-bold text-emerald-600">
               <CheckCircle2 className="h-3.5 w-3.5" /> Synced
             </span>

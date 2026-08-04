@@ -1,7 +1,9 @@
 import { assessmentRouter } from "@/server/api/routers/assessment";
+import { organizationRouter } from "@/server/api/routers/orgrouter";
 import { packagesRouter } from "@/server/api/routers/packages";
 import { postRouter } from "@/server/api/routers/post";
 import { resourcesRouter } from "@/server/api/routers/resources";
+import { statsRouter } from "@/server/api/routers/stats";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
 /**
@@ -14,6 +16,8 @@ export const appRouter = createTRPCRouter({
   packages: packagesRouter,
   resources: resourcesRouter,
   assessment: assessmentRouter,
+  org: organizationRouter,
+  stats: statsRouter,
 });
 
 // export type definition of API

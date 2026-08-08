@@ -107,7 +107,7 @@ export const organization = pgTable("organization", {
     .notNull(),
 });
 
-export const orgMember = pgTable("member", {
+export const member = pgTable("member", {
   id: text("id").primaryKey(),
   organizationId: text("organization_id")
     .notNull()
@@ -281,22 +281,22 @@ export const userRelations = relations(user, ({ many }) => ({
   subscriptions: many(userSubscriptions),
   assessmentSubmissions: many(assessmentSubmissions),
   resourceDownloads: many(resourceDownloads),
-  orgMembers: many(orgMember),
+  orgMembers: many(member),
   invitations: many(invitation, { relationName: "inviter" }),
 }));
 
 export const organizationRelations = relations(organization, ({ many }) => ({
-  members: many(orgMember),
+  members: many(member),
   invitations: many(invitation),
 }));
 
-export const orgMemberRelations = relations(orgMember, ({ one }) => ({
+export const orgMemberRelations = relations(member, ({ one }) => ({
   organization: one(organization, {
-    fields: [orgMember.organizationId],
+    fields: [member.organizationId],
     references: [organization.id],
   }),
   user: one(user, {
-    fields: [orgMember.userId],
+    fields: [member.userId],
     references: [user.id],
   }),
 }));
@@ -337,7 +337,7 @@ export const userSubscriptionsRelations = relations(
       fields: [userSubscriptions.packageId],
       references: [packages.id],
     }),
-  })
+  }),
 );
 
 export const resourcesRelations = relations(resources, ({ many }) => ({
@@ -356,7 +356,7 @@ export const resourceDownloadsRelations = relations(
       fields: [resourceDownloads.userId],
       references: [user.id],
     }),
-  })
+  }),
 );
 
 export const assessmentSubmissionsRelations = relations(
@@ -366,7 +366,7 @@ export const assessmentSubmissionsRelations = relations(
       fields: [assessmentSubmissions.userId],
       references: [user.id],
     }),
-  })
+  }),
 );
 
 export const recommendationRulesRelations = relations(
@@ -380,5 +380,5 @@ export const recommendationRulesRelations = relations(
       fields: [recommendationRules.targetResourceId],
       references: [resources.id],
     }),
-  })
+  }),
 );

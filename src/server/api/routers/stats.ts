@@ -4,7 +4,7 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import {
   assessmentSubmissions,
   contactSubmissions,
-  orgMember,
+  member,
   packages,
   resourceDownloads,
   resources,
@@ -37,13 +37,15 @@ export const statsRouter = createTRPCRouter({
       .select({ count: count() })
       .from(contactSubmissions);
 
-    const recentSubmissions = await ctx.db.query.assessmentSubmissions.findMany({
-      limit: 5,
-      orderBy: (submissions, { desc }) => [desc(submissions.createdAt)],
-      with: {
-        user: true,
+    const recentSubmissions = await ctx.db.query.assessmentSubmissions.findMany(
+      {
+        limit: 5,
+        orderBy: (submissions, { desc }) => [desc(submissions.createdAt)],
+        with: {
+          user: true,
+        },
       },
-    });
+    );
 
     const recentUsers = await ctx.db.query.user.findMany({
       limit: 5,
@@ -93,7 +95,7 @@ export const statsRouter = createTRPCRouter({
 
     const allResources = await ctx.db.select().from(resources);
     const allPackages = await ctx.db.select().from(packages);
-    const orgMembers = await ctx.db.select().from(orgMember);
+    const orgMembers = await ctx.db.select().from(member);
 
     const roleCounts: Record<string, number> = {};
     orgMembers.forEach((m) => {

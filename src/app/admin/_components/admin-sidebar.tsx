@@ -96,7 +96,11 @@ export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
 
-  function NavItem({ item }: { item: { title: string; url: string; icon: React.ElementType } }) {
+  function NavItem({
+    item,
+  }: {
+    item: { title: string; url: string; icon: React.ElementType };
+  }) {
     const isActive =
       item.url === "/admin"
         ? pathname === "/admin"
@@ -107,8 +111,8 @@ export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
           isActive={isActive}
           className={
             isActive
-              ? "bg-[rgba(79,175,168,0.15)] text-[var(--navy)] font-bold"
-              : "text-[var(--ink)] hover:bg-[rgba(248,244,235,0.8)] font-semibold"
+              ? "bg-[rgba(79,175,168,0.15)] font-bold text-[var(--navy)]"
+              : "font-semibold text-[var(--ink)] hover:bg-[rgba(248,244,235,0.8)]"
           }
         >
           <Link href={item.url} className="flex w-full items-center gap-2.5">
@@ -123,16 +127,16 @@ export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
   return (
     <Sidebar className="border-r border-[rgba(18,58,90,0.12)] bg-[#ffffff]">
       <SidebarHeader className="border-b border-[rgba(18,58,90,0.08)] px-4 py-3">
-        <Link href="/" className="flex items-center gap-3 text-decoration-none">
+        <Link href="/" className="text-decoration-none flex items-center gap-3">
           <Image
-            src="/limitless-logo.png"
+            src="/logo.jpeg"
             alt="Limitless Legacy Logo"
             width={36}
             height={36}
             className="h-9 w-auto object-contain"
           />
           <div className="flex flex-col">
-            <span className="font-extrabold text-[var(--navy)] text-base leading-tight">
+            <span className="text-base leading-tight font-extrabold text-[var(--navy)]">
               Limitless Legacy
             </span>
             <span className="text-xs font-semibold text-[var(--teal)]">
@@ -145,7 +149,7 @@ export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
       <SidebarContent className="px-2 py-3">
         {/* Open to all authenticated users */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-extrabold uppercase tracking-wider text-[rgba(18,58,90,0.6)] px-2 mb-1">
+          <SidebarGroupLabel className="mb-1 px-2 text-xs font-extrabold tracking-wider text-[rgba(18,58,90,0.6)] uppercase">
             Dashboard
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -159,7 +163,7 @@ export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
 
         {/* Admin-only management sections */}
         <SidebarGroup className="mt-2">
-          <SidebarGroupLabel className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-[rgba(18,58,90,0.6)] px-2 mb-1">
+          <SidebarGroupLabel className="mb-1 flex items-center gap-1.5 px-2 text-xs font-extrabold tracking-wider text-[rgba(18,58,90,0.6)] uppercase">
             {isAdmin ? (
               "Administration"
             ) : (
@@ -187,7 +191,7 @@ export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
         {/* Tools & system – admin only */}
         {isAdmin && (
           <SidebarGroup className="mt-2">
-            <SidebarGroupLabel className="text-xs font-extrabold uppercase tracking-wider text-[rgba(18,58,90,0.6)] px-2 mb-1">
+            <SidebarGroupLabel className="mb-1 px-2 text-xs font-extrabold tracking-wider text-[rgba(18,58,90,0.6)] uppercase">
               Tools & System
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -204,14 +208,21 @@ export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
       <SidebarFooter className="border-t border-[rgba(18,58,90,0.08)] p-3">
         <div className="flex items-center justify-between gap-2 rounded-xl bg-[#FAF7F0] p-2.5">
           <div className="flex items-center gap-2 overflow-hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--navy)] text-white font-bold text-xs">
-              {session?.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--navy)] text-xs font-bold text-white">
+              {session?.user.name
+                ? session.user.name.charAt(0).toUpperCase()
+                : "U"}
             </div>
             <div className="flex flex-col truncate">
               <span className="truncate text-xs font-bold text-[var(--navy)]">
                 {session?.user.name ?? "User"}
               </span>
-              <span className="truncate text-[10px] font-medium" style={{ color: isAdmin ? "var(--teal)" : "rgba(23,50,74,0.5)" }}>
+              <span
+                className="truncate text-[10px] font-medium"
+                style={{
+                  color: isAdmin ? "var(--teal)" : "rgba(23,50,74,0.5)",
+                }}
+              >
                 {isAdmin ? "Administrator" : "View-only access"}
               </span>
             </div>
@@ -219,7 +230,7 @@ export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
           {session && (
             <button
               onClick={() => authClient.signOut()}
-              className="rounded-lg p-1.5 text-[var(--navy)] hover:bg-[rgba(18,58,90,0.1)] transition"
+              className="rounded-lg p-1.5 text-[var(--navy)] transition hover:bg-[rgba(18,58,90,0.1)]"
               title="Sign out"
             >
               <LogOut className="h-4 w-4" />

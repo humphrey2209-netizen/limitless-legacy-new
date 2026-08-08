@@ -3,14 +3,21 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ExternalLink, Globe } from "lucide-react";
 
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getSession } from "@/server/better-auth/server";
 import { AdminSidebar } from "./_components/admin-sidebar";
+import { auth } from "@/server/better-auth";
+import { headers } from "next/headers";
 
 export const metadata: Metadata = {
   title: "Admin Portal | Limitless Legacy",
-  description: "Limitless Legacy site management and content administration portal.",
+  description:
+    "Limitless Legacy site management and content administration portal.",
 };
 
 /** Pages that any authenticated user can see (overview, analytics, assessment read) */
@@ -27,7 +34,23 @@ export default async function AdminLayout({
     redirect("/login?redirectTo=/admin");
   }
 
-  const isAdmin = (session.user as { role?: string }).role === "admin";
+  const data = await auth.api.setActiveOrganization({
+    body: {
+      organizationId: "3b61bc80-2981-44c1-b2eb-e8c6be4d0954",
+      organizationSlug: "limitless-legacy",
+    },
+    // This endpoint requires session cookies.
+    headers: await headers(),
+  });
+
+  //const isAdmin = (session.user as { role?: string }).role === "admin";
+
+  // Fetch the active organization using the current request headers
+  const activeMember = await auth.api.getActiveMember({
+    headers: await headers(),
+  });
+
+  const isAdmin = activeMember.role === "admin";
 
   return (
     <TooltipProvider>
@@ -55,7 +78,7 @@ export default async function AdminLayout({
                 >
                   <Globe className="h-3.5 w-3.5" />
                   View Public Website
-                  <ExternalLink className="h-3 w-3 ml-0.5" />
+                  <ExternalLink className="ml-0.5 h-3 w-3" />
                 </Link>
               </div>
             </header>

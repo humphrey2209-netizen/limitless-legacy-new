@@ -42,7 +42,8 @@ function LoginFormContent() {
         callbackURL: redirectTo,
       });
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to sign in with GitHub";
+      const msg =
+        err instanceof Error ? err.message : "Failed to sign in with GitHub";
       setError(msg);
       setLoading(false);
     }
@@ -87,7 +88,8 @@ function LoginFormContent() {
         }
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Authentication error occurred";
+      const msg =
+        err instanceof Error ? err.message : "Authentication error occurred";
       setError(msg);
     } finally {
       setLoading(false);
@@ -98,9 +100,12 @@ function LoginFormContent() {
     <div className="mx-auto w-full max-w-md">
       <div className="rounded-2xl border border-[rgba(18,58,90,0.12)] bg-white p-8 shadow-xl">
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2 text-decoration-none">
+          <Link
+            href="/"
+            className="text-decoration-none inline-flex items-center gap-2"
+          >
             <Image
-              src="/limitless-logo.png"
+              src="/logo.jpeg"
               alt="Limitless Legacy Logo"
               width={48}
               height={48}
@@ -109,7 +114,9 @@ function LoginFormContent() {
             />
           </Link>
           <h1 className="mt-4 text-2xl font-extrabold tracking-tight text-[var(--navy)]">
-            {mode === "signin" ? "Sign in to Limitless Legacy" : "Create your Account"}
+            {mode === "signin"
+              ? "Sign in to Limitless Legacy"
+              : "Create your Account"}
           </h1>
           <p className="mt-1 text-xs font-medium text-[rgba(23,50,74,0.7)]">
             Access the admin dashboard and site management tools
@@ -117,14 +124,14 @@ function LoginFormContent() {
         </div>
 
         {error && (
-          <div className="mt-4 flex items-center gap-2 rounded-xl bg-red-50 p-3 text-xs font-semibold text-red-700 border border-red-200">
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-700">
             <Shield className="h-4 w-4 shrink-0 text-red-500" />
             <span>{error}</span>
           </div>
         )}
 
         {success && (
-          <div className="mt-4 flex items-center gap-2 rounded-xl bg-emerald-50 p-3 text-xs font-semibold text-emerald-700 border border-emerald-200">
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold text-emerald-700">
             <CheckCircle className="h-4 w-4 shrink-0 text-emerald-500" />
             <span>{success}</span>
           </div>
@@ -135,7 +142,7 @@ function LoginFormContent() {
             type="button"
             onClick={handleGithubSignIn}
             disabled={loading}
-            className="flex w-full items-center justify-center gap-3 rounded-xl border border-[rgba(18,58,90,0.18)] bg-white py-2.5 px-4 text-sm font-bold text-[var(--navy)] transition hover:bg-[#FAF7F0] hover:border-[var(--teal)] disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-3 rounded-xl border border-[rgba(18,58,90,0.18)] bg-white px-4 py-2.5 text-sm font-bold text-[var(--navy)] transition hover:border-[var(--teal)] hover:bg-[#FAF7F0] disabled:opacity-50"
           >
             <GithubIcon className="h-4 w-4 text-[var(--navy)]" />
             <span>Continue with GitHub</span>
@@ -144,7 +151,7 @@ function LoginFormContent() {
 
         <div className="relative my-6 flex items-center justify-center">
           <div className="w-full border-t border-[rgba(18,58,90,0.1)]" />
-          <span className="absolute bg-white px-3 text-[11px] font-extrabold uppercase tracking-wider text-[rgba(18,58,90,0.5)]">
+          <span className="absolute bg-white px-3 text-[11px] font-extrabold tracking-wider text-[rgba(18,58,90,0.5)] uppercase">
             Or with email
           </span>
         </div>
@@ -152,46 +159,46 @@ function LoginFormContent() {
         <form onSubmit={handleEmailAuth} className="space-y-4">
           {mode === "signup" && (
             <div>
-              <label className="block text-xs font-bold text-[var(--navy)] mb-1">
+              <label className="mb-1 block text-xs font-bold text-[var(--navy)]">
                 Full Name
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[rgba(18,58,90,0.4)]" />
+                <User className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[rgba(18,58,90,0.4)]" />
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Jane Doe"
-                  className="w-full rounded-xl border border-[rgba(18,58,90,0.15)] bg-[#FAF7F0]/50 py-2.5 pl-9 pr-3 text-sm font-medium text-[var(--navy)] focus:border-[var(--teal)] focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-[rgba(18,58,90,0.15)] bg-[#FAF7F0]/50 py-2.5 pr-3 pl-9 text-sm font-medium text-[var(--navy)] focus:border-[var(--teal)] focus:bg-white focus:outline-none"
                 />
               </div>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-bold text-[var(--navy)] mb-1">
+            <label className="mb-1 block text-xs font-bold text-[var(--navy)]">
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[rgba(18,58,90,0.4)]" />
+              <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[rgba(18,58,90,0.4)]" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@company.com"
-                className="w-full rounded-xl border border-[rgba(18,58,90,0.15)] bg-[#FAF7F0]/50 py-2.5 pl-9 pr-3 text-sm font-medium text-[var(--navy)] focus:border-[var(--teal)] focus:bg-white focus:outline-none"
+                className="w-full rounded-xl border border-[rgba(18,58,90,0.15)] bg-[#FAF7F0]/50 py-2.5 pr-3 pl-9 text-sm font-medium text-[var(--navy)] focus:border-[var(--teal)] focus:bg-white focus:outline-none"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[var(--navy)] mb-1">
+            <label className="mb-1 block text-xs font-bold text-[var(--navy)]">
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[rgba(18,58,90,0.4)]" />
+              <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[rgba(18,58,90,0.4)]" />
               <input
                 type="password"
                 required
@@ -199,7 +206,7 @@ function LoginFormContent() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-xl border border-[rgba(18,58,90,0.15)] bg-[#FAF7F0]/50 py-2.5 pl-9 pr-3 text-sm font-medium text-[var(--navy)] focus:border-[var(--teal)] focus:bg-white focus:outline-none"
+                className="w-full rounded-xl border border-[rgba(18,58,90,0.15)] bg-[#FAF7F0]/50 py-2.5 pr-3 pl-9 text-sm font-medium text-[var(--navy)] focus:border-[var(--teal)] focus:bg-white focus:outline-none"
               />
             </div>
           </div>
@@ -207,19 +214,19 @@ function LoginFormContent() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-[var(--navy)] py-3 text-sm font-extrabold text-white transition hover:bg-[var(--navy)]/90 disabled:opacity-50 shadow-md"
+            className="w-full rounded-xl bg-[var(--navy)] py-3 text-sm font-extrabold text-white shadow-md transition hover:bg-[var(--navy)]/90 disabled:opacity-50"
           >
             {loading
               ? "Authenticating..."
               : mode === "signin"
-              ? "Sign In"
-              : "Create Account"}
+                ? "Sign In"
+                : "Create Account"}
           </button>
         </form>
 
         <div className="mt-6 text-center text-xs">
           {mode === "signin" ? (
-            <p className="text-[rgba(23,50,74,0.7)] font-medium">
+            <p className="font-medium text-[rgba(23,50,74,0.7)]">
               Don&apos;t have an account?{" "}
               <button
                 type="button"
@@ -233,7 +240,7 @@ function LoginFormContent() {
               </button>
             </p>
           ) : (
-            <p className="text-[rgba(23,50,74,0.7)] font-medium">
+            <p className="font-medium text-[rgba(23,50,74,0.7)]">
               Already have an account?{" "}
               <button
                 type="button"
@@ -253,7 +260,7 @@ function LoginFormContent() {
       <div className="mt-6 text-center">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--navy)] hover:text-[var(--teal)] transition"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--navy)] transition hover:text-[var(--teal)]"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to Public Website
@@ -266,12 +273,16 @@ function LoginFormContent() {
 export default function LoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#FAF7F0] p-4">
-      <Suspense fallback={
-        <div className="flex flex-col items-center justify-center p-8">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--teal)] border-t-transparent" />
-          <span className="mt-3 text-xs font-bold text-[var(--navy)]">Loading login portal...</span>
-        </div>
-      }>
+      <Suspense
+        fallback={
+          <div className="flex flex-col items-center justify-center p-8">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--teal)] border-t-transparent" />
+            <span className="mt-3 text-xs font-bold text-[var(--navy)]">
+              Loading login portal...
+            </span>
+          </div>
+        }
+      >
         <LoginFormContent />
       </Suspense>
     </main>

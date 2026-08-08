@@ -1,16 +1,18 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { adminProcedure, createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { orgMember, organization, user } from "@/server/db/schema";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "@/server/api/trpc";
+import { member, organization, user } from "@/server/db/schema";
 
 const ORG_SLUG = "limitless-legacy";
 
 /** Allowed org roles */
 const orgRoles = ["owner", "admin", "member", "customer"] as const;
 type OrgRole = (typeof orgRoles)[number];
-
-
 
 export const organizationRouter = createTRPCRouter({
   /**
@@ -36,10 +38,7 @@ export const organizationRouter = createTRPCRouter({
       .limit(1);
     const org = orgRows[0] ?? null;
 
-    const users = await ctx.db
-      .select()
-      .from(user)
-      .orderBy(user.createdAt);
+    const users = await ctx.db.select().from(user).orderBy(user.createdAt);
 
     if (!org) {
       return users.map((u) => ({
@@ -51,8 +50,8 @@ export const organizationRouter = createTRPCRouter({
 
     const members = await ctx.db
       .select()
-      .from(orgMember)
-      .where(eq(orgMember.organizationId, org.id));
+      .from(member)
+      .where(eq(member.organizationId, org.id));
 
     const memberMap = new Map(members.map((m) => [m.userId, m]));
 
@@ -74,7 +73,7 @@ export const organizationRouter = createTRPCRouter({
       z.object({
         userId: z.string().min(1),
         role: z.enum(orgRoles),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const orgRows = await ctx.db
@@ -90,19 +89,19 @@ export const organizationRouter = createTRPCRouter({
 
       const existing = await ctx.db
         .select()
-        .from(orgMember)
-        .where(eq(orgMember.userId, input.userId))
+        .from(member)
+        .where(eq(member.userId, input.userId))
         .limit(1);
 
       if (existing.length > 0) {
         await ctx.db
-          .update(orgMember)
+          .update(member)
           .set({ role: input.role })
-          .where(eq(orgMember.userId, input.userId));
+          .where(eq(member.userId, input.userId));
         return { action: "updated" as const };
       }
 
-      await ctx.db.insert(orgMember).values({
+      await ctx.db.insert(member).values({
         id: crypto.randomUUID(),
         organizationId: org.id,
         userId: input.userId,
@@ -119,9 +118,7 @@ export const organizationRouter = createTRPCRouter({
   removeMember: adminProcedure
     .input(z.object({ userId: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
-      await ctx.db
-        .delete(orgMember)
-        .where(eq(orgMember.userId, input.userId));
+      await ctx.db.delete(member).where(eq(member.userId, input.userId));
       return { success: true };
     }),
 });

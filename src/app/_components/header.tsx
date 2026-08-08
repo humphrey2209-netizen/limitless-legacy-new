@@ -23,7 +23,7 @@ export function Header() {
       <div className="nav-wrap container">
         <Link href="/" className="brand-wrap">
           <Image
-            src="/limitless-logo.png"
+            src="/logo.jpeg"
             alt="Limitless Legacy Logo"
             width={42}
             height={42}

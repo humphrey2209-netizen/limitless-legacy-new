@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
+import { auth } from "@/server/better-auth";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -43,8 +44,17 @@ export const assessmentRouter = createTRPCRouter({
     }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
+    const activeMember = await auth.api.getActiveMember({
+      headers: ctx.headers,
+    });
+    const isAdmin = activeMember.role === "admin";
+
     const submissions = await ctx.db.query.assessmentSubmissions.findMany({
       orderBy: (submissions, { desc }) => [desc(submissions.createdAt)],
+      where: isAdmin
+        ? undefined
+        : (submissions, { eq }) =>
+            eq(submissions.userId, ctx.session.user.id),
       with: {
         user: true,
       },

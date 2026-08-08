@@ -38,28 +38,30 @@ export default function AdminDashboardPage() {
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Users */}
-        <div className="flex flex-col justify-between rounded-2xl border border-[rgba(18,58,90,0.1)] bg-white p-5 shadow-sm transition hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-extrabold tracking-wider text-[var(--teal)] uppercase">
-              Registered Users
-            </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[rgba(79,175,168,0.15)] text-[var(--navy)]">
-              <Users className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="mt-4">
-            {isLoading ? (
-              <div className="h-9 w-20 animate-pulse rounded bg-[rgba(18,58,90,0.08)]" />
-            ) : (
-              <span className="text-3xl font-black text-[var(--navy)]">
-                {stats?.totalUsers.toLocaleString() ?? 0}
+        {role === "admin" && (
+          <div className="flex flex-col justify-between rounded-2xl border border-[rgba(18,58,90,0.1)] bg-white p-5 shadow-sm transition hover:shadow-md">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-extrabold tracking-wider text-[var(--teal)] uppercase">
+                Registered Users
               </span>
-            )}
-            <div className="mt-1 flex items-center gap-1 text-xs font-bold text-emerald-600">
-              <span>Database synced</span>
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[rgba(79,175,168,0.15)] text-[var(--navy)]">
+                <Users className="h-5 w-5" />
+              </div>
+            </div>
+            <div className="mt-4">
+              {isLoading ? (
+                <div className="h-9 w-20 animate-pulse rounded bg-[rgba(18,58,90,0.08)]" />
+              ) : (
+                <span className="text-3xl font-black text-[var(--navy)]">
+                  {stats?.totalUsers.toLocaleString() ?? 0}
+                </span>
+              )}
+              <div className="mt-1 flex items-center gap-1 text-xs font-bold text-emerald-600">
+                <span>Database synced</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Active Packages */}
         {role === "admin" && (

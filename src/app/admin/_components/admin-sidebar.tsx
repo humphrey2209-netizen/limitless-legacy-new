@@ -42,11 +42,6 @@ const openNavItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "Analytics & Reports",
-    url: "/admin/analytics",
-    icon: BarChart3,
-  },
-  {
     title: "Parent Assessment",
     url: "/admin/assessment",
     icon: ClipboardList,
@@ -55,6 +50,11 @@ const openNavItems = [
 
 /** Admin-only sections */
 const adminNavItems = [
+  {
+    title: "Analytics & Reports",
+    url: "/admin/analytics",
+    icon: BarChart3,
+  },
   {
     title: "Site Content",
     url: "/admin/content",

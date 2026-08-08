@@ -20,9 +20,6 @@ export const metadata: Metadata = {
     "Limitless Legacy site management and content administration portal.",
 };
 
-/** Pages that any authenticated user can see (overview, analytics, assessment read) */
-const PUBLIC_ADMIN_PATHS = ["/admin", "/admin/analytics", "/admin/assessment"];
-
 export default async function AdminLayout({
   children,
 }: {

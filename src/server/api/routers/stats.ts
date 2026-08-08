@@ -1,5 +1,6 @@
 import { count, eq } from "drizzle-orm";
 
+import { auth } from "@/server/better-auth";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import {
   assessmentSubmissions,
@@ -16,6 +17,11 @@ export const statsRouter = createTRPCRouter({
    * Real overview metrics for the main Admin Dashboard (/admin).
    */
   getOverview: protectedProcedure.query(async ({ ctx }) => {
+    const activeMember = await auth.api.getActiveMember({
+      headers: ctx.headers,
+    });
+    const isAdmin = activeMember.role === "admin";
+
     const [userResult] = await ctx.db.select({ count: count() }).from(user);
     const [packageResult] = await ctx.db
       .select({ count: count() })
@@ -24,9 +30,12 @@ export const statsRouter = createTRPCRouter({
     const [totalPackagesResult] = await ctx.db
       .select({ count: count() })
       .from(packages);
-    const [assessmentResult] = await ctx.db
-      .select({ count: count() })
-      .from(assessmentSubmissions);
+    const [assessmentResult] = isAdmin
+      ? await ctx.db.select({ count: count() }).from(assessmentSubmissions)
+      : await ctx.db
+          .select({ count: count() })
+          .from(assessmentSubmissions)
+          .where(eq(assessmentSubmissions.userId, ctx.session.user.id));
     const [resourceResult] = await ctx.db
       .select({ count: count() })
       .from(resources);
@@ -41,6 +50,10 @@ export const statsRouter = createTRPCRouter({
       {
         limit: 5,
         orderBy: (submissions, { desc }) => [desc(submissions.createdAt)],
+        where: isAdmin
+          ? undefined
+          : (submissions, { eq }) =>
+              eq(submissions.userId, ctx.session.user.id),
         with: {
           user: true,
         },

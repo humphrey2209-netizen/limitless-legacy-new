@@ -1,15 +1,15 @@
 import "@/styles/globals.css";
 
+import localFont from "next/font/local";
 import { type Metadata } from "next";
-import { Nunito } from "next/font/google";
 
 import { Footer } from "@/app/_components/footer";
 import { Header } from "@/app/_components/header";
 import { TRPCReactProvider } from "@/trpc/react";
 
-const nunito = Nunito({
-  subsets: ["latin"],
-  weight: ["500", "700", "800"],
+const nunito = localFont({
+  src: "../fonts/Nunito-VariableFont_wght.woff2",
+  weight: "500 800",
   variable: "--font-nunito",
 });
 

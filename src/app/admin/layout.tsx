@@ -31,7 +31,7 @@ export default async function AdminLayout({
     redirect("/login?redirectTo=/admin");
   }
 
-  const data = await auth.api.setActiveOrganization({
+  await auth.api.setActiveOrganization({
     body: {
       organizationId: "3b61bc80-2981-44c1-b2eb-e8c6be4d0954",
       organizationSlug: "limitless-legacy",

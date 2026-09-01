@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   BarChart3,
   ClipboardList,
@@ -94,6 +94,7 @@ const systemNavItems = [
 
 export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { data: session } = authClient.useSession();
 
   function NavItem({
@@ -229,7 +230,10 @@ export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
           </div>
           {session && (
             <button
-              onClick={() => authClient.signOut()}
+              onClick={async () => {
+                await authClient.signOut();
+                router.push("/");
+              }}
               className="rounded-lg p-1.5 text-[var(--navy)] transition hover:bg-[rgba(18,58,90,0.1)]"
               title="Sign out"
             >

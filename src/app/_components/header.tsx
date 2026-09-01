@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { authClient } from "@/server/better-auth/client";
 import { api } from "@/trpc/react";
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const { data: session } = authClient.useSession();
   const { data: contentData } = api.content.getAll.useQuery();
 
@@ -78,7 +79,10 @@ export function Header() {
             <button
               type="button"
               className="auth-nav-btn"
-              onClick={() => authClient.signOut()}
+              onClick={async () => {
+                await authClient.signOut();
+                router.push("/");
+              }}
             >
               Sign out ({session.user.name?.split(" ")[0] ?? "User"})
             </button>

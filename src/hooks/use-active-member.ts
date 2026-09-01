@@ -21,7 +21,7 @@ export function useActiveMemberRole() {
         setError(result.error.message ?? "Failed to load role");
         setRole(null);
       } else {
-        setRole((result.data as Role) || null);
+        setRole((result.data?.role as Role) || null);
         setError(null);
       }
       setLoading(false);

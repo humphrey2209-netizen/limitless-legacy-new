@@ -13,7 +13,6 @@ import { ZodError } from "zod";
 
 import { auth } from "@/server/better-auth";
 import { db } from "@/server/db";
-import { headers } from "next/headers";
 
 /**
  * 1. CONTEXT
@@ -146,8 +145,6 @@ export const adminProcedure = t.procedure
     if (!ctx.session?.user) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
-    const role = (ctx.session.user as { role?: string }).role;
-
     const activeMember = await auth.api.getActiveMember({
       headers: ctx.headers,
     });

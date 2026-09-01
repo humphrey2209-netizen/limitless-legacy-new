@@ -8,7 +8,6 @@ import {
   ClipboardList,
   FileText,
   FolderKanban,
-  History,
   Package,
   ShieldCheck,
   User,

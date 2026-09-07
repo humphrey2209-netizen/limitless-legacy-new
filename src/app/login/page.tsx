@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -39,6 +39,19 @@ function LoginFormContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const { data: session, isPending: sessionPending } = authClient.useSession();
+
+  useEffect(() => {
+    if (session?.user) {
+      router.replace("/");
+      router.refresh();
+    }
+  }, [session, router]);
+
+  if (sessionPending || session?.user) {
+    return null;
+  }
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();

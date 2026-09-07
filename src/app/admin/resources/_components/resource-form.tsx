@@ -321,7 +321,7 @@ export function ResourceForm({
       <form.Field
         name="fileUrl"
         validators={{
-          onBlur: ({ value }) =>
+          onSubmit: ({ value }) =>
             !value ? "A downloadable file is required" : undefined,
         }}
       >

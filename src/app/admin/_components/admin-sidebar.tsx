@@ -8,7 +8,6 @@ import {
   ClipboardList,
   FileText,
   FolderKanban,
-  History,
   LayoutDashboard,
   Lock,
   LogOut,
@@ -82,13 +81,7 @@ const adminNavItems = [
   },
 ];
 
-const systemNavItems = [
-  {
-    title: "Legacy Admin Editor",
-    url: "/legacy-admin",
-    icon: History,
-  },
-];
+
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -189,21 +182,7 @@ export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Tools & system – admin only */}
-        {isAdmin && (
-          <SidebarGroup className="mt-2">
-            <SidebarGroupLabel className="mb-1 px-2 text-xs font-extrabold tracking-wider text-[rgba(18,58,90,0.6)] uppercase">
-              Tools & System
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {systemNavItems.map((item) => (
-                  <NavItem key={item.url} item={item} />
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
+
       </SidebarContent>
 
       <SidebarFooter className="border-t border-[rgba(18,58,90,0.08)] p-3">

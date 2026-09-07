@@ -17,6 +17,7 @@ export const env = createEnv({
     DATABASE_URL: z.string().url(),
     DATABASE_URL_DIRECT: z.string().url(),
     SUPABASE_SECRET_KEY: z.string().min(1),
+    RESEND_KEY: z.string().min(1),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -45,6 +46,7 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     DATABASE_URL_DIRECT: process.env.DATABASE_URL_DIRECT,
     SUPABASE_SECRET_KEY: process.env.SUPABASE_SECRET_KEY,
+    RESEND_KEY: process.env.RESEND_KEY,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:

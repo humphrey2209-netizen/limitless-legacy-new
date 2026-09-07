@@ -43,7 +43,7 @@ export const auth = betterAuth({
           subject: "Your sign-in link for Limitless Legacy",
           html: `
             <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 32px 24px; background: #FAF7F0; border-radius: 16px;">
-              <img src="${env.BETTER_AUTH_URL}/logo.jpeg" alt="Limitless Legacy" style="height: 48px; margin-bottom: 24px;" />
+              <img src="${env.BETTER_AUTH_URL}/logo.jpeg" alt="Limitless Legacy" style="display: block; height: 48px; margin: 0 auto 24px;" />
               <h1 style="color: #17324a; font-size: 22px; font-weight: 800; margin: 0 0 8px;">Your sign-in link</h1>
               <p style="color: rgba(23,50,74,0.75); font-size: 14px; line-height: 1.6; margin: 0 0 24px;">
                 Click the button below to securely sign in to your Limitless Legacy account. This link expires in 10 minutes.
